@@ -1,0 +1,37 @@
+
+1. About CARRY
+CARRY8: a unit in FPGA
+carry_number: The number of the CARRY8 unit. e.g. [0,1,2,3,4,5,6,7] belongs to carry_num = 1 
+start_num:starting carry_number from the tapped data
+end_num:ending carry_number from the tapped data
+carry_index: position of the bin in the CARRY8 cell
+
+2. About POR
+DAG: directed Acyclic Graph i.e. preceding relationships of bins
+    DAG is deduced from the tapped data
+POR: Partial Order Reconstruction
+    Deduce, wherever possible from the DAG, the true sequence of the bins. 
+    Need to base on an ansatz, at the starting guess (POR1), since the logical
+    information is not enough.
+Results of the POR are called as either:
+  1) bin_assignment: in the format to be directly feedable to vivado.
+  i.e. in the format of {logical bin number: physical bin number}
+  e.g.
+  {0: 0, 1: 1, 2: 2, 3: 3, 4: 4 .. }
+
+
+  2) POR_result: in the format that shows the deduced bin sequence inside each CARRY8 cell
+  e.g.
+  [[(4, 8)], [(7, 2), (7, 3), (7, 1), (7, 8), (7, 4), (7, 6), (7, 7), (7, 5)], ...]
+
+logical bin: assigned bin number
+physical bin: original bin number (default value) which sequence is wrong
+
+3. slicing CARRY
+Bins from different CARRY8 cells are mixed up in the sequence, due to the time
+difference between two consecutive CARRY8 cells not larger than the time variation
+within a single cell.
+
+Hence the list of CARRY8 cells are 'sliced' into 3 groups (i.e. 
+only one in three is considered, they will all be 'glued' together
+by the technique called Iterative Time-bin Interleaf (IIT))
